@@ -34,6 +34,10 @@ def make_recommendations(matches):
 def hello_world():
     return 'Works!'
 
+@app.route('/redirect')
+def redirect():
+    return 'Welcome!'
+
 #driver
 port = int(os.environ.get('PORT', 8080))
 if __name__ == '__main__':
