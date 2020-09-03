@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Response, send_from_directory, url_for
+from flask import Flask, request, jsonify, Response, send_from_directory, url_for, render_template
 import requests, json
 import ast
 import sys, os, csv, json
@@ -8,7 +8,6 @@ from collections import defaultdict
 
 #flask init
 app = Flask(__name__)
-SERVER_ROOT = os.path.dirname(__file__)
 
 #private methods
 def parse_user_favorites(user_fav):
@@ -32,11 +31,11 @@ def make_recommendations(matches):
 #public endpoints
 @app.route('/')
 def hello_world():
-    return 'Works!'
+    return render_template('index.html')
 
 @app.route('/redirect')
 def redirect():
-    return 'Welcome!'
+    return render_template('home.html')
 
 #driver
 port = int(os.environ.get('PORT', 8080))
