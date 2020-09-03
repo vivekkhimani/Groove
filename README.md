@@ -53,8 +53,8 @@ diverse recommendations through intrinsic sound characteristics and we will also
 
 ### RECOMMENDATION BASIS:
 We can provide options for recommending based on the following parameters:
-    - Top songs and artists (Spotify - Personalization API)
-    - Based on any of the playlists (Spotify - Playlist API)
-    - Recently Played Tracks (Spotify - Player API)
-    - Saved Tracks (Spotify - Library API)
-    - Selected Artists
+- Top songs and artists (Spotify - Personalization API)
+- Based on any of the playlists (Spotify - Playlist API)
+- Recently Played Tracks (Spotify - Player API)
+- Saved Tracks (Spotify - Library API)
+- Selected Artists
