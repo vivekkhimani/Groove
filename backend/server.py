@@ -22,8 +22,7 @@ def query_clusters(vectorized_data):
     '''
     - Import the saved sklearn trained model
     - Get the designated cluster using the sklearn model
-    - Find the top-10 nearest songs based on the inertia score
-    - Return id's
+    - From each of the designated clusters, randomly pick the "closest" song such that it's not already picked before
     '''
     return
 
@@ -39,7 +38,7 @@ def make_visualizations(data):
     '''
     return
 
-def main():
+def main(user_data):
     '''
     - Wrapper for all the aforementioned private methods
     '''

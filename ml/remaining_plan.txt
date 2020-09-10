@@ -1,0 +1,13 @@
+1) Determine the best clustering hyperparams and generate the saved tally and sklearn model.
+
+2) Write a script for generating PCA and TSNE visualizations using the saved model and tally.
+
+3) Plug in the inference script on the server code.
+
+4) Modify the home.html to trigger appropriate endpoints and restructure the data as per the needs.
+
+V_IMP:
+
+1) Need to look into Jinja templating and stuff for dynamic rendering of recommendations and visualizations
+
+2) Also, desperately need to change the user interface
