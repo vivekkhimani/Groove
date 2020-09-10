@@ -1,6 +1,6 @@
 1) Determine the best clustering hyperparams and generate the saved tally and sklearn model.
 
-2) Write a script for generating PCA and TSNE visualizations using the saved model and tally.
+2) Write a script for generating PCA visualizations using the saved model and tally.
 
 3) Plug in the inference script on the server code.
 

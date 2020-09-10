@@ -9,14 +9,12 @@ When new inputs are received from the users, following will take place:
 
 For the clusters, we generate a visualization plots using the following strategies:
     a) PCA
-    b) TSNE
 '''
 #general
 import numpy as np
 import pandas as pd
 from joblib import dump, load
 import sys, os, csv, json
-import itertools
 from collections import defaultdict
 
 #sklearn
@@ -28,57 +26,95 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 #plotly
-import plotly as py 
-import plotly.graph_objs as go 
-from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+import plotly.express as px
 
 #import data for generalized recommendations
 def import_data(path):
     df = pd.read_csv(path)
     scaler = StandardScaler()
     normalizer = Normalizer()
-
+    selected_features = ['acousticness', 'danceability',  'loudness', 'tempo', 'energy', 'instrumentalness', 'valence','liveness', 'speechiness']
     #generate X
-    X = df[['acousticness', 'danceability', 'popularity',  'loudness', 'tempo', 'energy', 'instrumentalness', 'valence','liveness', 'speechiness']].values
-    X = scaler.fit_transform(X)
-    #logs
-    print(X) 
+    X = df[selected_features].values
+    X = pd.DataFrame(scaler.fit_transform(X))
+    X.columns = selected_features
+
+    #save index-id references for inference
+    id_s = df['id']
+    id_dict = id_s.to_dict()
+    full_path = './inference_req/index-id.json'
+    if not os.path.exists(full_path):
+        with open('./inference_req/index-id.json', 'w+') as fp:
+            json.dump(id_dict, fp)
     return X
 
-def explore_clusters(data):
+def explore_clusters(data, reduce_comp, num_clusters):
+    #init
     inertia_vals = defaultdict()
     silhouette_avg = defaultdict()
-    for num_clusters in range(1000, 1100, 250):
-        print("Running with num_clusters=", str(num_clusters))
-        kmeans = KMeans(n_clusters=num_clusters, n_init=50, max_iter=1000, verbose=1)
-        predictions = kmeans.fit_predict(data)
-        sil_avg = silhouette_score(data, predictions)
-        silhouette_avg[num_clusters] = sil_avg
-        inertia_vals[num_clusters] = kmeans.inertia_
+    pca = PCA(n_components=reduce_comp)
+    comp_data = pca.fit_transform(data)
+
+    #training
+    print("Training with num clusters = ", num_clusters)
+    kmeans = KMeans(n_clusters=num_clusters, n_init=10, max_iter=300, verbose=1)
+    predictions = kmeans.fit_predict(comp_data)
+    sil_avg = silhouette_score(comp_data, predictions)
+    silhouette_avg[num_clusters] = sil_avg
+    inertia_vals[num_clusters] = kmeans.inertia_
     print(sil_avg)
     print(inertia_vals)
 
-def create_clusters(data, num_clusters):
-    clustered_tally = defaultdict(list)
-    kmeans = KMeans(n_clusters=num_clusters, n_init=50, max_iter=1000, verbose=1)
-    predictions = kmeans.fit_predict(data)
-    sil_score = silhouette_score(data, predictions)
-    inertia = kmeans.inertia_
+    #save sklearn model
+    full_path = './inference_req/saved_kmeans_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.pkl'
+    joblib.dump(kmeans, full_path)
+
+    #save cluster-index references
+    cluster_index_tally = defaultdict(list)
+    predictions = predictions.astype(int)
     for indices, items in enumerate(predictions):
         clustered_tally[items].append(indices)
     clustered_tally = dict(clustered_tally)
-
-    #save the clustered tally
-    with open('cluster.json', 'w') as fp:
+    full_path = './inference_req/saved_cluster_index_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.json'
+    with open(full_path, 'w+') as fp:
         json.dump(clustered_tally, fp)
 
-    #save the sklearn model
-    joblib.dump(kmeans, "saved_kmeans.pkl")
+    #save cluster-centroid references
+    cluster_centroid_tally = dict()
+    for indices, items in enumerate(kmeans.cluster_centers_):
+        cluster_centroid_tally[indices] = items.tolist()
+    full_path = './inference_req/saved_cluster_centroid_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.json'
+    with open(full_path, 'w+') as fp:
+        json.dump(cluster_centroid_tally, fp)
 
-def visualize_PCA(X, predictions):
-    return
+    compressed_data = pd.DataFrame(comp_data)
+    col_names = list()
+    for i in range(reduce_comp):
+        col_names.append('PCA_'+str(i))
+    compressed_data.columns = col_names
+    predictions = predictions.astype(int)
+    compressed_data["cluster"] = predictions
+    visualize_PCA(compressed_data, reduce_comp, num_clusters)
 
-def visualize_TSNE(X, predictions):
+
+def visualize_PCA(X, reduce_comp, num_clusters):
+    if reduce_comp == 3:
+        fig = px.scatter_3d(X, x='PCA_0', y='PCA_1', z='PCA_2', color='cluster')
+        full_title = "library_size=170000 songs, num_clusters="+str(num_clusters)+", PCA_dimensions="+str(reduce_comp)
+        fig.update_layout(title=full_title)
+        full_png_path = './plots/overall_clustering_3dplot_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.png'
+        full_svg_path = './plots/overall_clustering_3dplot_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.svg'
+        fig.write_image(full_png_path)
+        fig.write_image(full_svg_path)
+
+    elif reduce_comp == 2:
+        fig = px.scatter(X, x='PCA_0', y='PCA_1', color='cluster')
+        full_title = "library_size=170000 songs, num_clusters="+str(num_clusters)+", PCA_dimensions="+str(reduce_comp)
+        fig.update_layout(title=full_title)
+        full_png_path = './plots/overall_clustering_2dplot_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.png'
+        full_svg_path = './plots/overall_clustering_2dplot_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.svg'
+        fig.write_image(full_png_path)
+        fig.write_image(full_svg_path)
     return
 
 #driver
@@ -86,5 +122,5 @@ if __name__ == '__main__':
     #prepare data
     X = import_data('./data/data.csv')
     #explore hyperparameters
-    explore_clusters(X)
+    explore_clusters(X, 2, 500)
     #use the best one to create final clusters
