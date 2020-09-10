@@ -12,19 +12,36 @@ app = Flask(__name__)
 #private methods
 def parse_user_favorites(user_fav):
     '''
-    convert the top user songs retrieved from Spotify into time-series format for TSLearn
+    - Get user preferred songs using Spotify API.
+    - Call the Spotify API and get audio features for each of the songs
+    - Convert the audio features in a pandas dataframe and return
     '''
     return
 
 def query_clusters(vectorized_data):
     '''
-    Find the matching clusters based on the vectorized user data
+    - Import the saved sklearn trained model
+    - Get the designated cluster using the sklearn model
+    - Find the top-10 nearest songs based on the inertia score
+    - Return id's
     '''
     return
 
 def make_recommendations(matches):
     '''
-    Sort the top matches and make top 10-20 recommendations
+    - Based on the retrieved id's, get track names, and display it on the interface
+    '''
+    return
+
+def make_visualizations(data):
+    '''
+    - Generate plots using the recommendations and display it on the frontend
+    '''
+    return
+
+def main():
+    '''
+    - Wrapper for all the aforementioned private methods
     '''
     return
 
@@ -36,6 +53,22 @@ def hello_world():
 @app.route('/redirect')
 def redirect():
     return render_template('home.html')
+
+@app.route('/top_songs')
+def top_songs():
+    return
+
+@app.route('/playlist')
+def playlist():
+    return
+
+@app.route('/recently_played')
+def recently_played():
+    return
+
+@app.route('saved_tracks')
+def saved_tracks():
+    return
 
 #driver
 port = int(os.environ.get('PORT', 8080))
