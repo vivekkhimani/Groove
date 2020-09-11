@@ -56,7 +56,23 @@ def query_clusters(data):
     img_url = make_visualizations(send_df, 2, 1000) 
     return predictions, img_url
 
-def make_recommendations(id_list, predictions, num_recommendations):
+def make_recommendations(access_token, id_list, predictions, num_recommendations):
+    name_list = list()
+    base_tracks_url = list()
+    headers = {'Authorization': 'Bearer ' + access_token}
+    ids_string = ''
+    for indices, items in enumerate(id_list):
+        ids_string+=str(items)
+        limit = len(id_list) - 1
+        if indices < limit:
+            ids_string+='%2C'
+    full_link = 'https://api.spotify.com/v1/tracks?ids='+ids_string+"&market=US"
+    track_details = requests.get(full_link, headers=headers)
+    track_json = track_details.json()
+    for items in track_json['tracks']:
+        name_list.append(items['name'])
+        base_tracks_url.append(items['external_urls']['spotify'])
+
     saved_cluster_path = os.path.join(SERVER_ROOT, 'inference', 'saved_cluster_index_compressed_2_clusters_1000.json')
     with open(saved_cluster_path) as f:
         saved_cluster_data = json.load(f)
@@ -64,6 +80,10 @@ def make_recommendations(id_list, predictions, num_recommendations):
     saved_id_path = os.path.join(SERVER_ROOT, 'inference', 'index-id.json')
     with open(saved_id_path) as f:
         saved_id_references = json.load(f)
+
+    saved_name_path = os.path.join(SERVER_ROOT, 'inference', 'id-name.json')
+    with open(saved_name_path) as f:
+        saved_name_references = json.load(f)
 
     saved_centroid_path = os.path.join(SERVER_ROOT, 'inference', 'saved_cluster_centroid_compressed_2_clusters_1000.json')
     with open(saved_centroid_path) as f:
@@ -78,8 +98,13 @@ def make_recommendations(id_list, predictions, num_recommendations):
         selected_cluster = predictions[reference]
         random_index = random.choice(saved_cluster_data[str(selected_cluster)])
         track_id = saved_id_references[str(random_index)]
+        track_name = saved_name_references[track_id]
+        link = 'https://api.spotify.com/v1/tracks?ids='+track_id+"&market=US"
+        track_det = requests.get(link, headers=headers)
+        track_js = track_det.json()
+        track_url = track_js['tracks'][0]['external_urls']['spotify']
         if (track_id not in id_list) and (track_id not in final_predicted_ids):
-            append_dict = {"recommended_track_id":track_id, "base_track_id":id_list[reference], "associated_cluster":str(selected_cluster), "cluster_centroid":saved_centroid_references[str(selected_cluster)]}
+            append_dict = {"recommended_track_id":track_id, "recommended_track_name":track_name, "recommended_track_url":track_url, "base_track_id":id_list[reference], "base_track_name":name_list[reference], "base_track_url":base_tracks_url[reference], "associated_cluster":str(selected_cluster), "cluster_centroid":saved_centroid_references[str(selected_cluster)]}
             final_predicted_ids.append(append_dict)
             predicted_tracks.append(track_id)
         reference+=1
@@ -107,13 +132,13 @@ def make_visualizations(X, reduce_comp, num_clusters):
     print(plot_name)
     full_svg_path = os.path.join(SERVER_ROOT, 'plots', plot_name)
     fig.write_image(full_svg_path)
-    img_url = 'https://6f6452b9d563.ngrok.io/plots/' + plot_name
+    img_url = 'https://c74b0f401e15.ngrok.io/plots/' + plot_name
     return img_url
 
 def main_ml(access_token, id_list, num_recommendations):
     audio_features = parse_user_favorites(access_token, id_list)
     predictions, img_url = query_clusters(audio_features)
-    recommended_dict, recommended_ids = make_recommendations(id_list, predictions, num_recommendations)
+    recommended_dict, recommended_ids = make_recommendations(access_token, id_list, predictions, num_recommendations)
     return {"recommendations":recommended_dict, "plot":img_url}
 
 #public endpoints

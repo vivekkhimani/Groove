@@ -16,6 +16,17 @@
         white-space: nowrap;
         width: 500px;
     }
+    table{
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width:100%;
+    }
+
+    td{
+    border: 1px solid #ffffff;
+    text-align: left;
+    padding: 8px;
+    }
     </style>
 </head>
 
@@ -27,21 +38,21 @@
             <div style="margin-bottom: 50px">
                 <h5>Trained Cluster Distribution</h5>
                 <img src="https://www.cs.drexel.edu/~vck29/overall_clustering_2dplot_compressed_2_clusters_1000.svg" class="img-fluid" alt="cluster_images">
-            <div id="oauth">
+                <div id="oauth">
+                </div>
+                <h3>Select one of the following methods to get recommendations:</h3>
+                <div style="display: block;">
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="top_songs">Top 20 Songs</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="recently_played">Recently Played (24 hrs)</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="saved_tracks">20 Saved Tracks</button>
+                    <h4>Or</h4>
+                    <div id="custom_user_playlists">
+                        <h5>Choose one of the following playlists:</h5>
+                    </div>
+                </div>
+                <div id="recomm">
+                </div>
             </div>
-            <h3>Select one of the following methods to get recommendations:</h3>
-            <div style="display: block;">
-                <button type="button" class="btn btn-primary btn-lg btn-block" id="top_songs">Top 20 Songs</button>
-                <button type="button" class="btn btn-primary btn-lg btn-block" id="recently_played">Recently Played (24 hrs)</button>
-                <button type="button" class="btn btn-primary btn-lg btn-block" id="saved_tracks">20 Saved Tracks</button>
-                <h4>Or</h4>
-                <div id="custom_user_playlists"><h5>Choose one of the following playlists:</h5></div>
-            </div>
-            <div style="margin-top: 50px">
-                <h5>Recommendations List:</h5>
-                <p>Something, Something, Something</p>
-                <h5>Selected Clusters Plot</h5>
-                <!--<img src='https://6f6452b9d563.ngrok.io/plots/plot.svg'/>-->
         </div>
     </div>
     {% raw %}
@@ -77,7 +88,7 @@
     (function() {
 
         var stateKey = 'spotify_auth_state';
-        const ngrok_url = 'https://6f6452b9d563.ngrok.io';
+        const ngrok_url = 'https://c74b0f401e15.ngrok.io';
         const user_playlist = [];
 
         function getHashParams() {
@@ -135,15 +146,94 @@
                     response.forEach((item, index) => {
                         user_playlist.push(item[0]);
                         const div_id = String(index)
-                        const append_val = '<button type="button" class="btn btn-secondary btn-lg btn-block" id="'+div_id+'">'+item[1]+'</button>'
+                        const append_val = '<button type="button" class="btn btn-secondary btn-lg btn-block" id="' + div_id + '">' + item[1] + '</button>'
                         document.getElementById('custom_user_playlists').innerHTML += append_val
                     })
                 }
             })
         }
 
+        function generate_recommendation_table(response){
+                    const plot_link = response['plot'];
+                    const rec_list = response['recommendations'];
+                    const rec_div = document.getElementById('recomm');
+                    rec_div.innerHTML = '';
+                    const h5_tag = document.createElement('h5');
+                    h5_tag.innerHTML = "Here's your recommendations:"
+                    rec_div.appendChild(h5_tag);
+
+                    const display_table = document.createElement('table');
+                    const header_row = display_table.insertRow(0);
+
+                    const cell1 = header_row.insertCell(0); //sr no.
+                    const cell2 = header_row.insertCell(1); //recommended song
+                    const cell3 = header_row.insertCell(2); //base song
+                    const cell4 = header_row.insertCell(3); //associated cluster
+                    const cell5 = header_row.insertCell(4);
+
+                    cell1.innerHTML = "<b>Sr NO.</b>";
+                    cell2.innerHTML = "<b>Recommended Song</b>";
+                    cell3.innerHTML = "<b>Base Song</b>";
+                    cell4.innerHTML = "<b>Associated Cluster</b>";
+                    cell5.innerHTML = "<b>Approval</b>";
+
+                    var row = 1;
+                    var td_count, data_row, dc;
+                    for (i=0; i<rec_list.length; i++){
+                        td_count = 0;
+                        data_row = display_table.insertRow(row);
+
+                        while(td_count < 5){
+                            dc = data_row.insertCell(td_count);
+
+                            //sr no.
+                            if (td_count == 0){
+                                dc.innerHTML = '<b>'+String(i)+'</b>';
+                            }
+
+                            //recommended song
+                            if (td_count == 1){
+                                const recommended_name = rec_list[i]['recommended_track_name'];
+                                const recommended_url = rec_list[i]['recommended_track_url'];
+                                dc.innerHTML = '<a href="'+recommended_url+'">'+recommended_name+'</a>';
+                            }
+
+                            //base song
+                            if (td_count == 2){
+                                const base_name = rec_list[i]['base_track_name'];
+                                const base_url = rec_list[i]['base_track_url'];
+                                dc.innerHTML = '<a href="'+base_url+'">'+base_name+'</a>';
+                            }
+
+                            //associated cluster
+                            if (td_count == 3){
+                                const associated_cluster = rec_list[i]['associated_cluster'];
+                                dc.innerHTML = '<b>'+String(associated_cluster)+'</b>';
+                            }
+
+                            //approval
+                            if (td_count == 4){
+                                const id_val = "recomm_"+String(i);
+                                dc.innerHTML = '<input type="checkbox" id="'+ id_val+'" name="' + id_val + '">';
+                            }
+                            td_count++;
+                        }
+                        row++;
+                        rec_div.appendChild(display_table);
+                        rec_div.appendChild(document.createElement('br'));
+                    }
+                    const h5_tag1 = document.createElement('h5');
+                    h5_tag1.innerHTML = "Recommended Cluster Distribution";
+                    rec_div.appendChild(h5_tag1);
+                    const img_tag = document.createElement('img');
+                    img_tag.src = plot_link;
+                    img_tag.class = 'img-fluid';
+                    img_tag.alt = 'plot';
+                    rec_div.appendChild(img_tag);
+        }
+
         //top songs listener
-        document.getElementById('top_songs').addEventListener('click', function(){
+        document.getElementById('top_songs').addEventListener('click', function() {
             $.ajax({
                 url: ngrok_url + '/top_songs',
                 type: 'get',
@@ -151,14 +241,13 @@
                     access_token: access_token
                 },
                 success: function(response) {
-                    //FIXME
-                    console.log(response)
+                    generate_recommendation_table(response);
                 }
             })
         })
 
         //recently played listener
-        document.getElementById('recently_played').addEventListener('click', function(){
+        document.getElementById('recently_played').addEventListener('click', function() {
             $.ajax({
                 url: ngrok_url + '/recently_played',
                 type: 'get',
@@ -166,14 +255,13 @@
                     access_token: access_token
                 },
                 success: function(response) {
-                    //FIXME
-                    console.log(response)
+                    generate_recommendation_table(response);
                 }
             })
         })
 
         //saved tracks listener
-        document.getElementById('saved_tracks').addEventListener('click', function(){
+        document.getElementById('saved_tracks').addEventListener('click', function() {
             $.ajax({
                 url: ngrok_url + '/saved_tracks',
                 type: 'get',
@@ -181,16 +269,15 @@
                     access_token: access_token
                 },
                 success: function(response) {
-                    //FIXME
-                    console.log(response)
+                    generate_recommendation_table(response);
                 }
             })
         })
 
         //helper function
-        function playlist_helper(item, index){
+        function playlist_helper(item, index) {
             document.getElementById(String(index)).addEventListener('click',
-                function(){
+                function() {
                     $.ajax({
                         url: ngrok_url + '/playlist',
                         type: 'get',
@@ -198,7 +285,7 @@
                             access_token: access_token,
                             req_id: item
                         },
-                        success: function(response){
+                        success: function(response) {
                             console.log(response)
                         }
                     })
@@ -206,7 +293,7 @@
         }
 
         //playlist listeners
-        if (user_playlist.length > 0){
+        if (user_playlist.length > 0) {
             user_playlist.forEach((item, index) => {
                 playlist_helper(item, index)
             })
