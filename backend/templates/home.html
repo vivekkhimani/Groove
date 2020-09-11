@@ -149,6 +149,29 @@
                         const append_val = '<button type="button" class="btn btn-secondary btn-lg btn-block" id="' + div_id + '">' + item[1] + '</button>'
                         document.getElementById('custom_user_playlists').innerHTML += append_val
                     })
+                    //playlist listeners
+                    console.log(user_playlist.length);
+                    if (user_playlist.length > 0) {
+                        user_playlist.forEach((item, index) => {
+                            const elem = document.getElementById(String(index))
+                            console.log(elem)
+                            elem.addEventListener('click', function(){
+                                $.ajax({
+                                    url: ngrok_url + '/playlist',
+                                    type: 'get',
+                                    data: {
+                                        access_token: access_token,
+                                        req_id: item
+                                    },
+                                    success: function(response) {
+                                        generate_recommendation_table(response);
+                                        //console.log(response);
+                                    }
+                                })
+                            })
+                        })
+                    }
+
                 }
             })
         }
@@ -290,13 +313,6 @@
                         }
                     })
                 })
-        }
-
-        //playlist listeners
-        if (user_playlist.length > 0) {
-            user_playlist.forEach((item, index) => {
-                playlist_helper(item, index)
-            })
         }
 
     })();

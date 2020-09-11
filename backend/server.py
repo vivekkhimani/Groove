@@ -112,22 +112,25 @@ def make_recommendations(access_token, id_list, predictions, num_recommendations
     return final_predicted_ids, predicted_tracks
 
 def make_visualizations(X, reduce_comp, num_clusters):
+    overall_data_path = os.path.join(SERVER_ROOT, 'inference', 'all_compressed_data.csv')
+    overall_X = pd.read_csv(overall_data_path)
+
     saved_centroid_path = os.path.join(SERVER_ROOT, 'inference', 'saved_cluster_centroid_compressed_2_clusters_1000.json')
     with open(saved_centroid_path) as f:
         saved_centroid_references = json.load(f)
 
+    req_clusters = X.cluster.unique().tolist()
+    filtered_X = overall_X[overall_X['cluster'].isin(req_clusters)]
+    filtered_X = filtered_X.rename(columns={'0':'PCA_0', '1':'PCA_1'})
     centroid_ref = list()
     for items in X['cluster']:
         rounded_ref = list(np.around(np.array(saved_centroid_references[str(items)]), 2))
         centroid_ref.append(rounded_ref)
     X['centroids'] = centroid_ref
-    fig = px.scatter(X, x='PCA_0', y='PCA_1', color='cluster', text='centroids')
+    fig = px.scatter(filtered_X, x='PCA_0', y='PCA_1', color='cluster')
     full_title = "Recommended Clusters: original_dimensions=9, PCA_dimensions="+str(reduce_comp)
     fig.update_layout(
-        title=full_title,
-        autosize=False,
-        width=1000,
-        height=800)
+        title=full_title)
     plot_name = "plot_" + str(time.time()) + ".svg"
     print(plot_name)
     full_svg_path = os.path.join(SERVER_ROOT, 'plots', plot_name)
@@ -185,10 +188,17 @@ def top_songs():
 
 @app.route('/playlist')
 def playlist():
-    #FIXME: need to fix the listener issue on client side
     access_token = request.args.get("access_token")
     playlist_id = request.args.get("req_id")
-    return jsonify(playlist_id)
+    headers = {'Authorization': 'Bearer ' + access_token}
+    full_link = "https://api.spotify.com/v1/playlists/"+playlist_id+"/tracks?market=US&fields=items(added_by.id%2Ctrack(name%2Cid%2Chref%2Calbum(name%2Chref)))&limit=50&offset=5";
+    playlist_data = requests.get(full_link, headers=headers);
+    playlist_json = playlist_data.json()
+    id_list = list()
+    for items in playlist_json['items']:
+        id_list.append(items['track']['id'])
+    rec_dicts = main_ml(access_token, id_list, 10)
+    return rec_dicts
 
 @app.route('/recently_played')
 def recently_played():
