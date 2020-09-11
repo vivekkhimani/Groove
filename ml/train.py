@@ -108,8 +108,12 @@ def explore_clusters(data, reduce_comp, num_clusters):
 def visualize_PCA(X, reduce_comp, num_clusters):
     if reduce_comp == 3:
         fig = px.scatter_3d(X, x='PCA_0', y='PCA_1', z='PCA_2', color='cluster')
-        full_title = "library_size=170000 songs, num_clusters="+str(num_clusters)+", PCA_dimensions="+str(reduce_comp)
-        fig.update_layout(title=full_title)
+        full_title = "library_size=170000 songs, num_clusters="+str(num_clusters)+", original_dimensions=9, PCA_dimensions="+str(reduce_comp)
+        fig.update_layout(
+            title=full_title,
+            autosize=False,
+            width=1000,
+            height=800)
         full_png_path = './plots/overall_clustering_3dplot_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.png'
         full_svg_path = './plots/overall_clustering_3dplot_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.svg'
         fig.write_image(full_png_path)
@@ -117,8 +121,12 @@ def visualize_PCA(X, reduce_comp, num_clusters):
 
     elif reduce_comp == 2:
         fig = px.scatter(X, x='PCA_0', y='PCA_1', color='cluster')
-        full_title = "library_size=170000 songs, num_clusters="+str(num_clusters)+", PCA_dimensions="+str(reduce_comp)
-        fig.update_layout(title=full_title)
+        full_title = "library_size=170000 songs, num_clusters="+str(num_clusters)+", original_dimensions=9, PCA_dimensions="+str(reduce_comp)
+        fig.update_layout(
+            title=full_title,
+            autosize=False,
+            width=1000,
+            height=800)
         full_png_path = './plots/overall_clustering_2dplot_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.png'
         full_svg_path = './plots/overall_clustering_2dplot_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.svg'
         fig.write_image(full_png_path)

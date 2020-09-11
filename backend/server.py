@@ -1,49 +1,120 @@
-from flask import Flask, request, jsonify, Response, send_from_directory, url_for, render_template
+from flask import Flask, request, jsonify, Response, send_from_directory, url_for, render_template, make_response
 import requests, json
 import ast
-import time
+import time, random
 import sys, os, csv, json
 import numpy as np
 import pandas as pd
+import joblib
 from collections import defaultdict
+
+from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+import plotly.express as px
 
 #flask init
 app = Flask(__name__)
+SERVER_ROOT = os.path.dirname(__file__)
 
 #private methods
-def parse_user_favorites(user_fav):
-    '''
-    - Get user preferred songs using Spotify API.
-    - Call the Spotify API and get audio features for each of the songs
-    - Convert the audio features in a pandas dataframe and return
-    '''
-    return
+def parse_user_favorites(access_token, id_list):
+    scaler = StandardScaler()
+    headers = {'Authorization': 'Bearer ' + access_token}
+    ids_string = ''
+    for indices, items in enumerate(id_list):
+        ids_string+=str(items)
+        limit = len(id_list) - 1
+        if indices < limit:
+            ids_string+='%2C'
+    full_link = 'https://api.spotify.com/v1/audio-features?ids='+ids_string
+    audio_features = requests.get(full_link, headers=headers)
+    audio_json = audio_features.json()
+    df = pd.DataFrame(audio_json['audio_features'])
+    required_features = ['acousticness', 'danceability',  'loudness', 'tempo', 'energy', 'instrumentalness', 'valence','liveness', 'speechiness']
+    X = df[required_features].values
+    X = pd.DataFrame(scaler.fit_transform(X))
+    X.columns = required_features
+    return X
 
-def query_clusters(vectorized_data):
-    '''
-    - Import the saved sklearn trained model
-    - Get the designated cluster using the sklearn model
-    - From each of the designated clusters, randomly pick the "closest" song such that it's not already picked before
-    '''
-    return
+def query_clusters(data):
+    pca = PCA(n_components=2)
+    compressed_data = pca.fit_transform(data)
+    model_url = os.path.join(SERVER_ROOT, 'inference', 'saved_kmeans_compressed_2_clusters_1000.pkl')
+    kmeans = joblib.load(open(model_url, 'rb'))
+    predictions = kmeans.predict(compressed_data)
 
-def make_recommendations(matches):
-    '''
-    - Based on the retrieved id's, get track names, and display it on the interface
-    '''
-    return
+    #send data for visualization
+    send_df = pd.DataFrame(compressed_data)
+    col_names = list()
+    for i in range(2):
+        col_names.append('PCA_'+str(i))
+    send_df.columns = col_names
+    int_pred = predictions.astype(int)
+    send_df['cluster'] = int_pred
+    img_url = make_visualizations(send_df, 2, 1000) 
+    return predictions, img_url
 
-def make_visualizations(data):
-    '''
-    - Generate plots using the recommendations and display it on the frontend
-    '''
-    return
+def make_recommendations(id_list, predictions, num_recommendations):
+    saved_cluster_path = os.path.join(SERVER_ROOT, 'inference', 'saved_cluster_index_compressed_2_clusters_1000.json')
+    with open(saved_cluster_path) as f:
+        saved_cluster_data = json.load(f)
 
-def main(user_data):
-    '''
-    - Wrapper for all the aforementioned private methods
-    '''
-    return
+    saved_id_path = os.path.join(SERVER_ROOT, 'inference', 'index-id.json')
+    with open(saved_id_path) as f:
+        saved_id_references = json.load(f)
+
+    saved_centroid_path = os.path.join(SERVER_ROOT, 'inference', 'saved_cluster_centroid_compressed_2_clusters_1000.json')
+    with open(saved_centroid_path) as f:
+        saved_centroid_references = json.load(f)
+
+    final_predicted_ids = list()
+    predicted_tracks = list()
+    reference = 0
+    while len(final_predicted_ids) < num_recommendations:
+        if reference == len(predictions):
+            reference = 0
+        selected_cluster = predictions[reference]
+        random_index = random.choice(saved_cluster_data[str(selected_cluster)])
+        track_id = saved_id_references[str(random_index)]
+        if (track_id not in id_list) and (track_id not in final_predicted_ids):
+            append_dict = {"recommended_track_id":track_id, "base_track_id":id_list[reference], "associated_cluster":str(selected_cluster), "cluster_centroid":saved_centroid_references[str(selected_cluster)]}
+            final_predicted_ids.append(append_dict)
+            predicted_tracks.append(track_id)
+        reference+=1
+        continue
+    return final_predicted_ids, predicted_tracks
+
+def make_visualizations(X, reduce_comp, num_clusters):
+    saved_centroid_path = os.path.join(SERVER_ROOT, 'inference', 'saved_cluster_centroid_compressed_2_clusters_1000.json')
+    with open(saved_centroid_path) as f:
+        saved_centroid_references = json.load(f)
+
+    centroid_ref = list()
+    for items in X['cluster']:
+        rounded_ref = list(np.around(np.array(saved_centroid_references[str(items)]), 2))
+        centroid_ref.append(rounded_ref)
+    X['centroids'] = centroid_ref
+    fig = px.scatter(X, x='PCA_0', y='PCA_1', color='cluster', text='centroids')
+    full_title = "Recommended Clusters: original_dimensions=9, PCA_dimensions="+str(reduce_comp)
+    fig.update_layout(
+        title=full_title,
+        autosize=False,
+        width=1000,
+        height=800)
+    plot_name = "plot_" + str(time.time()) + ".svg"
+    print(plot_name)
+    full_svg_path = os.path.join(SERVER_ROOT, 'plots', plot_name)
+    fig.write_image(full_svg_path)
+    img_url = 'https://6f6452b9d563.ngrok.io/plots/' + plot_name
+    return img_url
+
+def main_ml(access_token, id_list, num_recommendations):
+    audio_features = parse_user_favorites(access_token, id_list)
+    predictions, img_url = query_clusters(audio_features)
+    recommended_dict, recommended_ids = make_recommendations(id_list, predictions, num_recommendations)
+    return {"recommendations":recommended_dict, "plot":img_url}
 
 #public endpoints
 @app.route('/')
@@ -53,6 +124,13 @@ def hello_world():
 @app.route('/redirect')
 def redirect():
     return render_template('home.html')
+
+@app.route('/plots/<path:path>', methods=['GET'])
+def get_plots(path):
+    full_path = "./plots/" + path
+    resp = make_response(open(full_path).read())
+    resp.content_type = 'image/svg+xml'
+    return resp
 
 @app.route('/get_user_playlist')
 def get_playlist():
@@ -77,15 +155,15 @@ def top_songs():
     id_list = list()
     for items in tracks_list:
         id_list.append(items['id'])
-    #FIXME: Insert the ML part here
-    return jsonify(id_list)
+    rec_dict = main_ml(access_token, id_list, 10)
+    return rec_dict
 
 @app.route('/playlist')
 def playlist():
     #FIXME: need to fix the listener issue on client side
     access_token = request.args.get("access_token")
-    req_id = request.args.get("req_id")
-    return jsonify(req_id)
+    playlist_id = request.args.get("req_id")
+    return jsonify(playlist_id)
 
 @app.route('/recently_played')
 def recently_played():
@@ -101,8 +179,8 @@ def recently_played():
     id_list = list()
     for items in tracks_list:
         id_list.append(items['track']['id'])
-    #FIXME: Insert the ML part here
-    return jsonify(id_list)
+    rec_dict = main_ml(access_token, id_list, 10)
+    return rec_dict
 
 @app.route('/saved_tracks')
 def saved_tracks():
@@ -114,8 +192,8 @@ def saved_tracks():
     id_list = list()
     for items in  tracks_list:
         id_list.append(items['track']['id'])
-    #FIXME: Insert the ML part here
-    return jsonify(id_list)
+    rec_dict = main_ml(access_token, id_list, 10)
+    return rec_dict
 
 #driver
 port = int(os.environ.get('PORT', 8080))

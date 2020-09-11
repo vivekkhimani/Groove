@@ -24,16 +24,24 @@
         <div id="loggedin">
             <div id="user-profile">
             </div>
+            <div style="margin-bottom: 50px">
+                <h5>Trained Cluster Distribution</h5>
+                <img src="https://www.cs.drexel.edu/~vck29/overall_clustering_2dplot_compressed_2_clusters_1000.svg" class="img-fluid" alt="cluster_images">
+            <div id="oauth">
+            </div>
             <h3>Select one of the following methods to get recommendations:</h3>
             <div style="display: block;">
-                <button type="button" class="btn btn-primary btn-lg btn-block" id="top_songs">Top Songs</button>
+                <button type="button" class="btn btn-primary btn-lg btn-block" id="top_songs">Top 20 Songs</button>
                 <button type="button" class="btn btn-primary btn-lg btn-block" id="recently_played">Recently Played (24 hrs)</button>
-                <button type="button" class="btn btn-primary btn-lg btn-block" id="saved_tracks">Saved Tracks</button>
+                <button type="button" class="btn btn-primary btn-lg btn-block" id="saved_tracks">20 Saved Tracks</button>
                 <h4>Or</h4>
                 <div id="custom_user_playlists"><h5>Choose one of the following playlists:</h5></div>
             </div>
-            <div id="oauth">
-            </div>
+            <div style="margin-top: 50px">
+                <h5>Recommendations List:</h5>
+                <p>Something, Something, Something</p>
+                <h5>Selected Clusters Plot</h5>
+                <!--<img src='https://6f6452b9d563.ngrok.io/plots/plot.svg'/>-->
         </div>
     </div>
     {% raw %}
@@ -69,7 +77,7 @@
     (function() {
 
         var stateKey = 'spotify_auth_state';
-        const ngrok_url = 'https://423a2414fc24.ngrok.io';
+        const ngrok_url = 'https://6f6452b9d563.ngrok.io';
         const user_playlist = [];
 
         function getHashParams() {
