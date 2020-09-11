@@ -13,7 +13,7 @@ For the clusters, we generate a visualization plots using the following strategi
 #general
 import numpy as np
 import pandas as pd
-from joblib import dump, load
+import joblib
 import sys, os, csv, json
 from collections import defaultdict
 
@@ -57,8 +57,13 @@ def explore_clusters(data, reduce_comp, num_clusters):
 
     #training
     print("Training with num clusters = ", num_clusters)
-    kmeans = KMeans(n_clusters=num_clusters, n_init=10, max_iter=300, verbose=1)
-    predictions = kmeans.fit_predict(comp_data)
+    full_path = './inference_req/saved_kmeans_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.pkl'
+    if os.path.exists(full_path):
+        kmeans = joblib.load(open(full_path, 'rb'))
+        predictions = kmeans.predict(comp_data)
+    else:
+        kmeans = KMeans(n_clusters=num_clusters, n_init=10, max_iter=300, verbose=1)
+        predictions = kmeans.fit_predict(comp_data)
     sil_avg = silhouette_score(comp_data, predictions)
     silhouette_avg[num_clusters] = sil_avg
     inertia_vals[num_clusters] = kmeans.inertia_
@@ -70,14 +75,17 @@ def explore_clusters(data, reduce_comp, num_clusters):
     joblib.dump(kmeans, full_path)
 
     #save cluster-index references
-    cluster_index_tally = defaultdict(list)
+    clustered_index_tally = dict()
     predictions = predictions.astype(int)
     for indices, items in enumerate(predictions):
-        clustered_tally[items].append(indices)
-    clustered_tally = dict(clustered_tally)
+        if items not in clustered_index_tally:
+            clustered_index_tally[int(items)] = [indices]
+        else:
+            clustered_index_tally[int(items)].append(indices)
+    clustered_index_tally = dict(clustered_index_tally)
     full_path = './inference_req/saved_cluster_index_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.json'
     with open(full_path, 'w+') as fp:
-        json.dump(clustered_tally, fp)
+        json.dump(clustered_index_tally, fp)
 
     #save cluster-centroid references
     cluster_centroid_tally = dict()
@@ -115,12 +123,11 @@ def visualize_PCA(X, reduce_comp, num_clusters):
         full_svg_path = './plots/overall_clustering_2dplot_compressed_'+str(reduce_comp)+'_clusters_'+str(num_clusters)+'.svg'
         fig.write_image(full_png_path)
         fig.write_image(full_svg_path)
-    return
 
 #driver
 if __name__ == '__main__':
     #prepare data
     X = import_data('./data/data.csv')
     #explore hyperparameters
-    explore_clusters(X, 2, 500)
+    explore_clusters(X, 2, 1000)
     #use the best one to create final clusters
