@@ -771,7 +771,7 @@
               <div class="error-message"></div>
               <div class="sent-message">Your message has been sent. Thank you!</div>
             </div>
-            <div class="text-center"><button type="submit">Send Message</button></div>
+            <div class="text-center"><button type="submit" id="login-button">Send Message</button></div>
           </form>
         </div>
 
@@ -871,4 +871,49 @@
 
 </body>
 
+    <script>
+    var stateKey = 'spotify_auth_state';
+
+    /**
+     * Generates a random string containing numbers and letters
+     * @param  {number} length The length of the string
+     * @return {string} The generated string
+     */
+    function generateRandomString(length) {
+        var text = '';
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+        for (var i = 0; i < length; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    };
+    var state = generateRandomString(16);
+    localStorage.setItem(stateKey, state);
+    console.log(localStorage);
+
+    document.getElementById('login-button').addEventListener('click', function() {
+
+        var client_id = '544a4596dd3a41ebaaebf8ab253dd998'; // This will be put in .env when we go public.
+        var redirect_uri = 'https://c74b0f401e15.ngrok.io/redirect'; // This link updates every 8 hours. Fix it manually.
+
+        //var state = generateRandomString(16);
+
+        //localStorage.setItem(stateKey, state);
+        //console.log(localStorage);
+        var scope = 'user-read-private user-read-email user-top-read playlist-read-collaborative user-read-recently-played user-library-read user-read-recently-played';
+
+        var url = 'https://accounts.spotify.com/authorize';
+        url += '?response_type=token';
+        url += '&show_dialog=true';
+        url += '&client_id=' + encodeURIComponent(client_id);
+        url += '&scope=' + encodeURIComponent(scope);
+        url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
+        url += '&state=' + encodeURIComponent(state);
+
+        setTimeout(function(){
+          window.location = url;
+        }, 1000)
+    }, false);
+    </script>
 </html>

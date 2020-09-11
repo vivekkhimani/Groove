@@ -57,4 +57,7 @@ We can provide options for recommending based on the following parameters:
 - Based on any of the playlists (Spotify - Playlist API)
 - Recently Played Tracks (Spotify - Player API)
 - Saved Tracks (Spotify - Library API)
-- Selected Artists
+
+### DATA:
+As we didn't have enough resources to compile every song available in the Spotify library as it would add up to 50 million songs, we have used a dataset with 170000 songs (from 1928 - 2020). The dataset can be found at: https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks. As the dataset doesn't include every song in the library, it's possible that our system doesn't include a few songs in the recommendation. However, when we will take this to the production level, we
+expect to use a much larger database.
