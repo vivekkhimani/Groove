@@ -135,7 +135,7 @@ def make_visualizations(X, reduce_comp, num_clusters):
     print(plot_name)
     full_svg_path = os.path.join(SERVER_ROOT, 'plots', plot_name)
     fig.write_image(full_svg_path)
-    img_url = 'https://786b101a627d.ngrok.io/plots/' + plot_name
+    img_url = 'https://5b0993856be0.ngrok.io/plots/' + plot_name
     return img_url
 
 def main_ml(access_token, id_list, num_recommendations):
