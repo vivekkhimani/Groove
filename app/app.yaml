@@ -1,0 +1,83 @@
+application: groove
+version: 1
+runtime: python37
+
+default_expiration: "5m"
+
+handlers:
+- url: /(.*\.html)
+  static_dir: templates
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/css
+  static_dir: static/assets/css
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/img
+  static_dir: static/assets/img
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/js
+  static_dir: static/assets/js
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/vendor/icofont
+  static_dir: static/assets/vendor/icofont
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/vendor/font-awesome/css
+  static_dir: static/assets/vendor/font-awesome/css
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/vendor/boxicons/css
+  static_dir: static/assets/vendor/boxicons/css
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/vendor/ionicons/css
+  static_dir: static/assets/vendor/ionicons/css
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/vendor/ionicons/fonts
+  static_dir: static/assets/vendor/ionicons/fonts
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/vendor/font-awesome/fonts
+  static_dir: static/assets/vendor/font-awesome/fonts
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/vendor/icofont
+  static_dir: static/assets/vendor/icofont
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/vendor/icofont/fonts
+  static_dir: static/assets/vendor/iconfont
+  expiration: 2m
+    Access-Control-Allow-Origin: *
+
+- url: /static/assets/vendor/boxicons/fonts
+  static_dir: static/assets/vendor/boxicons/fonts
+  expiration: 2m
+  http_headers:
+    Access-Control-Allow-Origin: *

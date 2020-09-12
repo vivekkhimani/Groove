@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Groove: Unsupervised Music Recommendations</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <!-- Favicons -->
+    <!--   <link href="/static/assets/img/favicon.png" rel="icon"> -->
+    <link href="https://www.cs.drexel.edu/~vck29/pennapps_static/img/favicon.png" rel="icon">
+    <link href="https://www.cs.drexel.edu/~vck29/pennapps_static/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link href="https://www.cs.drexel.edu/~vck29/pennapps_static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+    <link href="/static/assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="/static/assets/vendor/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="https://www.cs.drexel.edu/~vck29/pennapps_static/animate.css/animate.min.css" rel="stylesheet">
+    <link href="https://www.cs.drexel.edu/~vck29/pennapps_static/venobox/venobox.css" rel="stylesheet">
+    <link href="https://www.cs.drexel.edu/~vck29/pennapps_static/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="https://www.cs.drexel.edu/~vck29/pennapps_static/aos/aos.css" rel="stylesheet">
+    <!-- Template Main CSS File -->
+    <link href="/static/assets/css/index_style.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top header-transparent">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-xl-11 d-flex align-items-center">
+                    <h1 class="logo mr-auto"><a href="index.html">Groove</a></h1>
+                    <!-- Uncomment below if you prefer to use an image logo -->
+                    <!-- <a href="index.html" class="logo mr-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+                    <nav class="nav-menu d-none d-lg-block">
+                        <ul>
+                            <li class="active"><a href="#intro">Home</a></li>
+                            <li><a href="#about">About Us</a></li>
+                            <li><a href="#faq">FAQ</a></li>
+                            <!--               <li><a href="#contact">Contact Us</a></li> -->
+                        </ul>
+                    </nav><!-- .nav-menu -->
+                </div>
+            </div>
+        </div>
+    </header><!-- End Header -->
+    <!-- ======= Intro Section ======= -->
+    <section id="intro">
+        <div class="intro-container">
+            <div id="introCarousel" class="carousel  slide carousel-fade" data-ride="carousel">
+                <ol class="carousel-indicators"></ol>
+                <div class="carousel-inner" role="listbox">
+                    <div class="carousel-item active" style="background-image: url(https://www.cs.drexel.edu/~vck29/pennapps_static/img/four_people_listening_music.jpg)">
+                        <div class="carousel-container">
+                            <div class="container">
+                                <h2 class="animate__animated animate__fadeInDown">Groove: An Unsupervised, Data Sensitive Music Recommendation Algorithm</h2>
+                                <p class="animate__animated animate__fadeInUp">An unsupervised approach to music recommendation without accessing other users data or using traditional recommendation algorithms like collaborative filtering.</p>
+                                <a href="#featured-services" class="btn-get-started scrollto animate__animated animate__fadeInUp" id="login-button">Get Started!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><!-- End Intro Section -->
+    <main id="main">
+        <!-- ======= Featured Services Section Section ======= -->
+        <section id="featured-services">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 box box-bg">
+                        <i class="ion-ios-people-outline"></i>
+                        <h4 class="title"><a href="">Personalization</a></h4>
+                        <p class="description">Instead of recommendations based on the matched users with similar music taste, we believe users tend to like songs with unique intrinsic sound characteristics like beats, pitch, timbre, tempo, etc</p>
+                    </div>
+                    <div class="col-lg-4 box">
+                        <i class="ion-ios-toggle-outline"></i>
+                        <h4 class="title"><a href="">Privacy</a></h4>
+                        <p class="description">Music is a strong indicator of psychological state of the user. Due to stricter privacy-related legislations (Ex. GDPR) and awareness, it might not always be possible to access other user's data.</p>
+                    </div>
+                    <div class="col-lg-4 box box-bg">
+                        <i class="ion-ios-heart-outline"></i>
+                        <h4 class="title"><a href="">Feedback</a></h4>
+                        <p class="description">If the original recommendation is not to your taste, we will recommend a new one factoring in your approval rating of the original.</p>
+                    </div>
+                </div>
+            </div>
+        </section><!-- End Featured Services Section -->
+        <!-- ======= About Us Section ======= -->
+        <section id="about">
+            <div class="container" data-aos="fade-up">
+                <header class="section-header">
+                    <h2><strong> About Us </strong></h2>
+                    <blockquote class="blockquote"><p style="text-align:left">Spotify and other popular music apps rely heavily on other users data to tailor the best recommendations from millions of options available. Traditionally, they find the music in your playlist and find other users with similar interests. After matching two or more users with similar interests, the algorithm recommends the music that a user might not have tried before, but is liked by another user with similar taste. Of course, the companies don't disclose the exact details about their algorithms as it helps them stand out from the competitors. However, the approach described above is usually a backbone of any music recommendation algorithm.</p>
+                    <p style="text-align: left">However, with stricter legislations (like GDPR) and increased awareness about privacy, it might not be always possible to access, store, and use other user's data. As the preferred music and playlists can be strong indicator about the psychological conditions of a listener, music might soon get classified as a sensitive user data. Additionally, if two or more users have same taste for a specific song, it cannot be implied that they might share the taste for other songs. At times, a user might only like a specific song due to favorite artist, popular album, or even the actors. In that case, a liked song might introduce a bias and might degrade the performance of the recommender. Lastly, we believe that users often tend to like songs with similar intrinsic sound wave characteristics like beats, tempo, timbre, pitch, frequency, etc.</p>
+                    <p style="text-align: left">As a result, we introduce <strong>Groove: An Unsupervised, Data Sensitive Music Recommendation Algorithm</strong>.Groove aims to address the issues mentioned in the previous paragraphs and is built using powerful, unsupervised clustering algorithm that is trained on vectorized sound wave characteristics data. By introducing an unsupervised recommendations approach instead of the traditional approaches, we provide highly personalized, private, and bias-free recommendations. More importantly, our system is implemented to collect and improve based on the recommendation feedback collected from the users.</p>
+                </blockquote>
+                </header>
+                <div class="row about-cols">
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                        <div class="about-col">
+                            <div class="img">
+                                <img src="https://www.cs.drexel.edu/~vck29/pennapps_static/img/problem.jpeg" alt="" class="img-fluid">
+                                <div class="icon"><i class="ion-help"></i></div>
+                            </div>
+                            <h2 class="title"><a href="#">Problem</a></h2>
+                            <ul>
+                                <li>Popular music services rely heavily on other users data to tailor the best recommendations from millions of options available.</li>
+                                <li>Traditionally, they find the music in your playlist and find other users with similar interests.</li>
+                                <li>After matching two or more users with similar interests, the algorithm recommends the music that a user might not have tried before, but is liked by the matched user.</li>
+                                <li>The companies don't disclose the exact details about their algorithms as it helps them stand out from the competitors</li>
+                                <li>However, the approach described above is usually a backbone of any music recommendation algorithm.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                        <div class="about-col">
+                            <div class="img">
+                                <img src="https://www.cs.drexel.edu/~vck29/pennapps_static/img/challenges.jpeg" alt="" class="img-fluid">
+                                <div class="icon"><i class="ion-alert"></i></div>
+                            </div>
+                            <h2 class="title"><a href="#">Challenges</a></h2>
+                            <ul>
+                                <li>Music can be a strong indicator of the psychological state of a listener. With strict privacy-related legislations, it's dangerous to assume access to all the user's data.</li>
+                            </ul>
+                                
+                                <!-- Additionally, if two or more users have same taste for a specific song, it cannot be implied that they might share the taste for other songs. At times, a user might only like a specific song due to favorite artist, popular album, or even the actors. In that case, a liked song might introduce a bias and might degrade the performance of the recommender. Lastly, we believe that users often tend to like songs with similar intrinsic sound wave characteristics like beats, tempo, timbre, pitch, frequency, etc. -->
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                        <div class="about-col">
+                            <div class="img">
+                                <img src="https://www.cs.drexel.edu/~vck29/pennapps_static/img/solution.jpeg" alt="" class="img-fluid">
+                                <div class="icon"><i class="ion-checkmark"></i></div>
+                            </div>
+                            <h2 class="title"><a href="#">Solution</a></h2>
+                            <p>
+                                As a result, we introduce Groove: An Unsupervised, Data Sensitive Music Recommendation Algorithm.Groove aims to address the issues mentioned in the previous paragraphs and is built using powerful, unsupervised clustering algorithm that is trained on vectorized sound wave characteristics data. By introducing an unsupervised recommendations approach instead of the traditional approaches, we provide highly personalized, private, and bias-free recommendations. More importantly, our system is implemented to collect and improve based on the recommendation feedback collected from the users.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section><!-- End About Us Section -->
+        <!-- ======= Frequently Asked Questions Section ======= -->
+        <section id="faq" class="faq section-bg">
+            <div class="container" data-aos="fade-up">
+                <header class="section-header">
+                    <h2><strong> FAQ </strong></h2>
+                </header>
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Why are the users required to log in using Spotify?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                We claim to not access <strong>other user's data</strong>, which is normally used by the traditional recommendation algorithms. Traditional algorithms use <strong>collaborative filtering</strong>, which heavily relies on other user's data. We ask users to log in using Spotify so that we can compare the <strong>wave characteristics</strong> of their preferred Spotify songs and make unsupervised recommendations from our library. Users can choose to get recommendations based on "Top 20 Spotify Songs", "Saved Songs", "Recently Played Songs in 24 hours", or any of the playlists. This concept even works without getting preferences through Spotify. In that case, users would have to manually enter their preferred songs which is highly inconvenient.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTen">How do we make recommendations without using other user's data?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseTen" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Traditional algorithms use a popular <strong>collaborative filtering</strong> algorithm which finds other users with similar music taste as yours and make recommendations from their library which you might not have heard before. In our case, we have compiled a huge library of Spotify songs and trained an unsupervised clustering algorithm based on <strong>implicit sound wave characteristics</strong>. Once we get your preferences from Spotify, our algorithm will select an appropriate cluster for your song based on the wave characteristics. We will pick the closest song from the determined cluster and recommend it to you. As a result, we will only use your preferences and clusters generated from our library to make recommendations. We will not use other user's data.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseEleven">How is the algorithm reliable?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseEleven" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                We believe that the users usually love songs with similar sound wave characteristics like <strong>pitch, tempo, beats, frequency, timbre, acousticness, speechiness, etc.</strong>. While traditional algorithms assume that two or more users with similar taste on a few songs will like all the songs in common, we have a different perspective. Sometimes it's possible that if two or more users have same taste for a specific song, it's not necessary that they might have same taste for other songs. At times, the user might only like a specific song due to biases like favorite artists, albums, or even the actors. Instead, we believe that the users will like the songs which have similar implicit sound wave characteristics to their previously liked songs. Peek into your playlist and think if most of your songs have similar tempo, beats, frequency, genre, etc. As we recommend songs based on such characteristics, our algorithm is extremely reliable.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThirteen">How do existing recommendation algorithms work?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseThirteen" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              The existing algorithms heavily rely on <strong>collaborative filtering</strong> which makes recommendations by matching two or more users with similar taste. More details about the traditional music recommendation algorithms can be found <a href="https://qz.com/571007/the-magic-that-makes-spotifys-discover-weekly-playlists-so-damn-good/#:~:text=Spotify%20begins%20by%20looking%20at,the%20common%20currency%20on%20Spotify" target="_blank">here</a>.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwelve">How is our algorithm different from existing algorithms?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwelve" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                The traditional algorithms heavily rely on other user's data and it's dangerous to assume that we would always have access to other user's data. Also, due to stricter data privacy legislations, accessing user data for Internet-based services is becoming more and more difficult. Primarily motivated by this issue, our algorithm strictly uses the implicit sound wave characteristics of your previously liked or preferred songs and make ML-based recommendations from our libary.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFourteen">What is the primary motivation for developing such an algorithm?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseFourteen" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              <ul>
+                                <li>Stricter privacy-related legislations (GDPR) make it harder to access other users data and apply the traditional recommendation algorithms like collaborative filtering</li>
+                                <li>As traditional algorithms are likely to recommend songs which are highly popular with several users, the new artists and songs don't get enough chances to stand out. As we don't treat popularity as a ML feature, our algorithm treats all the artists and songs equally.</li>
+                                <li>Making recommendations based on implicit sound wave characteristics (pitch, tempo, beats, timbre, frequency, etc.) provides greater personalization to the users and makes the recommender free from uncontrolled biases like favorite artists, favorite album, etc.</li>
+                              </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFifteen">How big is the library used for making recommendations?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseFifteen" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              If we were to use this algorithm in production, we could have trained it on an extremely huge library of songs. For example, Spotify has ~50 million songs. However, as we didn't have enough resources to handle such a huge amount of data, we trained a demo algorithm using 170,000 Spotify songs which are randomly compiled from 1938-2020. Because of random compilation, you might see some irrelevant recommendations. However, we believe that the algorithm could do better if trained on larger data.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSixteen">What ML algorithms have been used to make recommendations?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseSixteen" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              As we didn't have access to <strong>labelled data</strong> from <strong>other users</strong>, we have used <strong>unsupervised machine learning algorithm</strong>. We primarily used <strong>K-Means Clustering</strong> & <strong>mini-batch K-Means Clustering</strong> to classify 170,000 songs in our library into 1000 clusters. As each of our songs had 9 features (sound wave characteristics), which was a lot for effective K-Means clustering, we used <strong>Principal Component Analysis (PCA)</strong> for dimensionality reduction while preserving the sound wave characteristics. After evaluating the model performance using multiple hyperparameters (PCA-dimensions, number of clusters, etc.), we settled with 2 features and 1000 clusters. We used metrics like <strong>Sum of Squared Error (SSE) Score</strong> and <strong>Silhouette Score</strong> to determine the appropriate hyperparameters. In the current demo, we are using a <strong>K-Means Clustering</strong> algorithm trained for <strong>1000 clusters</strong>. Each song has <strong>2 features</strong> after the application of PCA.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSeventeen">What's the exact process of making recommendations?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseSeventeen" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              <ul>
+                                <li>We trained a <strong>K-Means clustering</strong> algorithm using our dataset that contained 170,000 songs, and 9 features for each song.</li>
+                                <li>Our algorithm was tuned to classify the songs in 1000 clusters based on the features (sound wave characteristics).</li>
+                                <li>Users are required to log in through Spotify which will take them to our homepage.</li>
+                                <li>Users are provided with an option to select the criteria for getting recommendations. They can select to get the recommendations based on one of the following:
+                                  <ul>
+                                    <li>Top 20 Song</li>
+                                    <li>Recently Played Songs (24 hours)</li>
+                                    <li>Saved Tracks</li>
+                                    <li>Playlists created by the user</li>
+                                  </ul>
+                                </li>
+                                <li>Once the user selects any of the aforementioned criteria, we will use the Spotify API to extract their preferred songs, vectorize it, and feed it to our trained model.</li>
+                                <li>Based on the song characteristics, our model will assign a one of the thousand clusters (0 - 999) to each of the song.</li>
+                                <li>We will use our library to search other songs that belong to the same cluster as the user preferred song and recommend the closest one.</li>
+                                <li>We will recommend the top 10 songs using the same method. User will have an option to approve or disapprove of our recommendations and the system will automatically update the algorithm accordingly.</li>
+                              </ul> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseEighteen">How do we personalize the recommendations?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseEighteen" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              <ul>
+                                <li>As our algorithm makes recommendations based on implicit sound wave characteristics of the previously liked songs by the users, it will be relevant to the taste of the users.</li>
+                                <li>As the user has an option to approve or disapprove of our recommendations, we improve the algorithm and make sure that the same recommendation will not be made to the users.</li>
+                                <li>Once we will collect enough approval/disapproval data, we will retrain our model using the user preferences, which will act as a labelled data for us.</li>
+                              </ul> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseNineteen">What tools and technologies have we used?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseNineteen" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Component</th>
+                                    <th scope="col">Tool</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <th scope="row">Server</th>
+                                    <td>Flask (Python3)</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row">Client</th>
+                                    <td>HTML, CSS, JavaScript</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row">Data</th>
+                                    <td>Spotify Developers API</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row">ML Training</th>
+                                    <td>Scikit-Learn</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row">Plots</th>
+                                    <td>Plotly</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row">Hosting</th>
+                                    <td>ngrok (tunelling local host)</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row">Version Control</th>
+                                    <td>GitHub</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwenty">Where can you view our code?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwenty" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              Our code is publicly available on GitHub. Click <a href="https://github.com/vivekkhimani/groove_unsupervised_music_recsys" target="_blank">here</a>.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwentyOne">What is the future scope of improvement?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwentyOne" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              This project can be expanded upon and the results can be drastically improved using one of the following methods:
+                              <ul>
+                                <li>Currently we only have 170,000 songs in our library. We can further improve the results if the model is trained with more songs.</li>
+                                <li>Currently, no filters are applied to the recommendations made by ML algorithm. We can apply filters like year of release, language, genre, etc. to make the recommendations more relevant.</li>
+                                <li>We are already collecting user approval data. Once we have enough data, we can retrain the ML algorithm with labelled data and a supervised approach to further improve the results.</li>
+                                <li>K-Means Clustering algorithm is just a starting point for this problem. We can explore more algorithms (probably time-series based clustering) and hyperparameters to get even better results.</li>
+                                <li>We can include more features (sound wave characteristics) and perform time-series based clustering to improve the results. This is a great direction for further exploration.</li>
+                              </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwentyTwo">What could have we done if we had an access to GPT-3?</a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwentyTwo" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              <p>GPT-3 is a latest transformer-based model trained by OpenAI on a massive amount of data. GPT-3 can be trained to perform a wide-range of tasks by just training it using a few examples (few-shot learning). Which means, the GPT-3 API can be readily used to give a few training examples and results. The people who have an access to this API have done really cool projects like text to code, text to LaTex, etc. by training the GPT-3 model using a few manually generated examples.</p>
+                              <p>Unfortunately, as the API is in early stages of development, only a few people have an access to this API and can use it for their own purpose. If we had an access to this API, we could have used it for making recommendations instead of K-Means Clustering. But that would have definitely made our project a lot less challenging because we would have only configured the API instead of manually compiling the data, engineering the features, trying out different hyperparameters, training a model, and deploying it in our application.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+        </section><!-- End Frequently Asked Questions Section -->
+    </main><!-- End #main -->
+
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+    <!-- Uncomment below i you want to use a preloader -->
+    <!-- <div id="preloader"></div> -->
+    <!-- Vendor JS Files -->
+    <script src="https://www.cs.drexel.edu/~vck29/pennapps_static/jquery/jquery.min.js"></script>
+    <script src="https://www.cs.drexel.edu/~vck29/pennapps_static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.cs.drexel.edu/~vck29/pennapps_static/jquery.easing/jquery.easing.min.js"></script>
+    <!--<script src="/static/assets/vendor/php-email-form/validate.js"></script>-->
+    <script src="https://www.cs.drexel.edu/~vck29/pennapps_static/waypoints/jquery.waypoints.min.js"></script>
+    <script src="https://www.cs.drexel.edu/~vck29/pennapps_static/counterup/counterup.min.js"></script>
+    <script src="https://www.cs.drexel.edu/~vck29/pennapps_static/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="https://www.cs.drexel.edu/~vck29/pennapps_static/venobox/venobox.min.js"></script>
+    <script src="https://www.cs.drexel.edu/~vck29/pennapps_static/owl.carousel/owl.carousel.min.js"></script>
+    <script src="https://www.cs.drexel.edu/~vck29/pennapps_static/aos/aos.js"></script>
+    <!-- Template Main JS File -->
+    <script src="/static/assets/js/main.js"></script>
+</body>
+<script>
+var stateKey = 'spotify_auth_state';
+
+/**
+ * Generates a random string containing numbers and letters
+ * @param  {number} length The length of the string
+ * @return {string} The generated string
+ */
+function generateRandomString(length) {
+    var text = '';
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    for (var i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+};
+var state = generateRandomString(16);
+localStorage.setItem(stateKey, state);
+console.log(localStorage);
+
+document.getElementById('login-button').addEventListener('click', function() {
+
+    var client_id = '544a4596dd3a41ebaaebf8ab253dd998'; // This will be put in .env when we go public.
+    //var redirect_uri = 'https://e15010db582e.ngrok.io/redirect'; // This link updates every 8 hours. Fix it manually.
+    var redirect_uri = 'https://groove-music-289322.uc.r.appspot.com/redirect';
+
+    //var state = generateRandomString(16);
+
+    //localStorage.setItem(stateKey, state);
+    //console.log(localStorage);
+    var scope = 'user-read-private user-read-email user-top-read playlist-read-collaborative user-read-recently-played user-library-read user-read-recently-played';
+
+    var url = 'https://accounts.spotify.com/authorize';
+    url += '?response_type=token';
+    url += '&show_dialog=true';
+    url += '&client_id=' + encodeURIComponent(client_id);
+    url += '&scope=' + encodeURIComponent(scope);
+    url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
+    url += '&state=' + encodeURIComponent(state);
+
+    setTimeout(function() {
+        window.location = url;
+    }, 1000)
+}, false);
+</script>
+
+</html>
