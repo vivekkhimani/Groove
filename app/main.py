@@ -136,7 +136,7 @@ def make_visualizations(X, reduce_comp, num_clusters):
     full_svg_path = os.path.join(SERVER_ROOT, 'plots', plot_name)
     fig.write_image(full_svg_path)
     #img_url = 'https://e15010db582e.ngrok.io/plots/' + plot_name
-    img_url = 'https://groove-music-289322.uc.r.appspot.com/plots/' + plot_name
+    img_url = 'http://groove-music-289322.uc.r.appspot.com/plots/' + plot_name
     return img_url
 
 def main_ml(access_token, id_list, num_recommendations):
@@ -152,7 +152,7 @@ def hello_world():
 
 @app.route('/redirect')
 def redirect():
-    return render_template('portindex.html')
+    return render_template('home.html')
 
 @app.route('/plots/<path:path>', methods=['GET'])
 def get_plots(path):
