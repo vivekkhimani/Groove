@@ -73,7 +73,7 @@ handlers:
 - url: /static/assets/vendor/icofont/fonts
   static_dir: static/assets/vendor/iconfont
   expiration: "120s"
-  http_header:
+  http_headers:
     Access-Control-Allow-Origin: '*'
 
 - url: /static/assets/vendor/boxicons/fonts
