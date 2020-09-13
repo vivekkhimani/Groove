@@ -53,8 +53,8 @@ def query_clusters(data):
     send_df.columns = col_names
     int_pred = predictions.astype(int)
     send_df['cluster'] = int_pred
-    #img_url = make_visualizations(send_df, 2, 1000)
-    img_url = 'https://www.cs.drexel.edu/~vck29/pennapps_static/img/favicon.png'
+    img_url = make_visualizations(send_df, 2, 1000)
+    #img_url = 'https://www.cs.drexel.edu/~vck29/pennapps_static/img/favicon.png'
     return predictions, img_url
 
 def make_recommendations(access_token, id_list, predictions, num_recommendations):
@@ -136,8 +136,8 @@ def make_visualizations(X, reduce_comp, num_clusters):
     print(plot_name)
     full_svg_path = os.path.join(SERVER_ROOT, 'plots', plot_name)
     fig.write_image(full_svg_path)
-    #img_url = 'https://e15010db582e.ngrok.io/plots/' + plot_name
-    img_url = 'http://groove-music-289322.uc.r.appspot.com/plots/' + plot_name
+    img_url = 'https://e15010db582e.ngrok.io/plots/' + plot_name
+    #img_url = 'http://groove-music-289322.uc.r.appspot.com/plots/' + plot_name
     return img_url
 
 def main_ml(access_token, id_list, num_recommendations):
@@ -153,7 +153,7 @@ def hello_world():
 
 @app.route('/redirect')
 def redirect():
-    return render_template('home.html')
+    return render_template('portindex.html')
 
 @app.route('/plots/<path:path>', methods=['GET'])
 def get_plots(path):
