@@ -1,0 +1,321 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Groove: Unsupervised Music Recommender</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
+    <style type="text/css">
+    .text-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 500px;
+    }
+    table{
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width:100%;
+    }
+
+    td{
+    border: 1px solid #ffffff;
+    text-align: left;
+    padding: 8px;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="loggedin">
+            <div id="user-profile">
+            </div>
+            <div style="margin-bottom: 50px">
+                <h5>Trained Cluster Distribution</h5>
+                <img src="https://www.cs.drexel.edu/~vck29/overall_clustering_2dplot_compressed_2_clusters_1000.svg" class="img-fluid" alt="cluster_images">
+                <div id="oauth">
+                </div>
+                <h3>Select one of the following methods to get recommendations:</h3>
+                <div style="display: block;">
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="top_songs">Top 20 Songs</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="recently_played">Recently Played (24 hrs)</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="saved_tracks">20 Saved Tracks</button>
+                    <h4>Or</h4>
+                    <div id="custom_user_playlists">
+                        <h5>Choose one of the following playlists:</h5>
+                    </div>
+                </div>
+                <div id="recomm">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% raw %}
+    <script id="user-profile-template" type="text/x-handlebars-template">
+        <h1>Logged in as {{display_name}}</h1>
+      <div class="media">
+        <div class="pull-left">
+          <img class="media-object" width="100" src="{{images.0.url}}" />
+        </div>
+        <div class="media-body">
+          <dl class="dl-horizontal">
+            <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
+            <dt>Id</dt><dd>{{id}}</dd>
+            <dt>Email</dt><dd>{{email}}</dd>
+            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
+            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
+            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
+            <dt>Country</dt><dd>{{country}}</dd>
+          </dl>
+        </div>
+      </div>
+    </script>
+    {% endraw %}
+    {% raw %}
+    <script id="oauth-template" type="text/x-handlebars-template">
+        <h2>oAuth info</h2>
+      <dl class="dl-horizontal">
+        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
+      </dl>
+    </script>
+    {% endraw %}
+    <script>
+    (function() {
+
+        var stateKey = 'spotify_auth_state';
+        const ngrok_url = 'http://groove-music-289322.uc.r.appspot.com';
+        const user_playlist = [];
+
+        function getHashParams() {
+            var hashParams = {};
+            var e, r = /([^&;=]+)=?([^&;]*)/g,
+                q = window.location.hash.substring(1);
+            while (e = r.exec(q)) {
+                hashParams[e[1]] = decodeURIComponent(e[2]);
+            }
+            return hashParams;
+        }
+
+        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
+            userProfileTemplate = Handlebars.compile(userProfileSource),
+            userProfilePlaceholder = document.getElementById('user-profile');
+
+        // var oauthSource = document.getElementById('oauth-template').innerHTML,
+        //     oauthTemplate = Handlebars.compile(oauthSource),
+        //     oauthPlaceholder = document.getElementById('oauth');
+
+        var params = getHashParams();
+
+        var access_token = params.access_token,
+            state = params.state,
+            storedState = localStorage.getItem(stateKey);
+
+        if (access_token && (state == null || state !== storedState)) {
+            alert('There was an error during the authentication');
+        } else {
+            localStorage.removeItem(stateKey);
+            if (access_token) {
+                $.ajax({
+                    url: 'https://api.spotify.com/v1/me',
+                    headers: {
+                        'Authorization': 'Bearer ' + access_token
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+                        //oauthPlaceholder.innerHTML = oauthTemplate({access_token:access_token});
+                    }
+                });
+            }
+        }
+
+        //get the user playlists and display it in the UI
+        if (access_token) {
+            $.ajax({
+                url: ngrok_url + '/get_user_playlist',
+                type: 'get',
+                data: {
+                    access_token: access_token
+                },
+                success: function(response) {
+                    response.forEach((item, index) => {
+                        user_playlist.push(item[0]);
+                        const div_id = String(index)
+                        const append_val = '<button type="button" class="btn btn-secondary btn-lg btn-block" id="' + div_id + '">' + item[1] + '</button>'
+                        document.getElementById('custom_user_playlists').innerHTML += append_val
+                    })
+                    //playlist listeners
+                    console.log(user_playlist.length);
+                    if (user_playlist.length > 0) {
+                        user_playlist.forEach((item, index) => {
+                            const elem = document.getElementById(String(index))
+                            console.log(elem)
+                            elem.addEventListener('click', function(){
+                                $.ajax({
+                                    url: ngrok_url + '/playlist',
+                                    type: 'get',
+                                    data: {
+                                        access_token: access_token,
+                                        req_id: item
+                                    },
+                                    success: function(response) {
+                                        generate_recommendation_table(response);
+                                        //console.log(response);
+                                    }
+                                })
+                            })
+                        })
+                    }
+
+                }
+            })
+        }
+
+        function generate_recommendation_table(response){
+                    const plot_link = response['plot'];
+                    const rec_list = response['recommendations'];
+                    const rec_div = document.getElementById('recomm');
+                    rec_div.innerHTML = '';
+                    const h5_tag = document.createElement('h5');
+                    h5_tag.innerHTML = "Here's your recommendations:"
+                    rec_div.appendChild(h5_tag);
+
+                    const display_table = document.createElement('table');
+                    const header_row = display_table.insertRow(0);
+
+                    const cell1 = header_row.insertCell(0); //sr no.
+                    const cell2 = header_row.insertCell(1); //recommended song
+                    const cell3 = header_row.insertCell(2); //base song
+                    const cell4 = header_row.insertCell(3); //associated cluster
+                    const cell5 = header_row.insertCell(4);
+
+                    cell1.innerHTML = "<b>Sr NO.</b>";
+                    cell2.innerHTML = "<b>Recommended Song</b>";
+                    cell3.innerHTML = "<b>Base Song</b>";
+                    cell4.innerHTML = "<b>Associated Cluster</b>";
+                    cell5.innerHTML = "<b>Approval</b>";
+
+                    var row = 1;
+                    var td_count, data_row, dc;
+                    for (i=0; i<rec_list.length; i++){
+                        td_count = 0;
+                        data_row = display_table.insertRow(row);
+
+                        while(td_count < 5){
+                            dc = data_row.insertCell(td_count);
+
+                            //sr no.
+                            if (td_count == 0){
+                                dc.innerHTML = '<b>'+String(i)+'</b>';
+                            }
+
+                            //recommended song
+                            if (td_count == 1){
+                                const recommended_name = rec_list[i]['recommended_track_name'];
+                                const recommended_url = rec_list[i]['recommended_track_url'];
+                                dc.innerHTML = '<a href="'+recommended_url+'">'+recommended_name+'</a>';
+                            }
+
+                            //base song
+                            if (td_count == 2){
+                                const base_name = rec_list[i]['base_track_name'];
+                                const base_url = rec_list[i]['base_track_url'];
+                                dc.innerHTML = '<a href="'+base_url+'">'+base_name+'</a>';
+                            }
+
+                            //associated cluster
+                            if (td_count == 3){
+                                const associated_cluster = rec_list[i]['associated_cluster'];
+                                dc.innerHTML = '<b>'+String(associated_cluster)+'</b>';
+                            }
+
+                            //approval
+                            if (td_count == 4){
+                                const id_val = "recomm_"+String(i);
+                                dc.innerHTML = '<input type="checkbox" id="'+ id_val+'" name="' + id_val + '">';
+                            }
+                            td_count++;
+                        }
+                        row++;
+                        rec_div.appendChild(display_table);
+                        rec_div.appendChild(document.createElement('br'));
+                    }
+                    const h5_tag1 = document.createElement('h5');
+                    h5_tag1.innerHTML = "Recommended Cluster Distribution";
+                    rec_div.appendChild(h5_tag1);
+                    const img_tag = document.createElement('img');
+                    img_tag.src = plot_link;
+                    img_tag.class = 'img-fluid';
+                    img_tag.alt = 'plot';
+                    rec_div.appendChild(img_tag);
+        }
+
+        //top songs listener
+        document.getElementById('top_songs').addEventListener('click', function() {
+            $.ajax({
+                url: ngrok_url + '/top_songs',
+                type: 'get',
+                data: {
+                    access_token: access_token
+                },
+                success: function(response) {
+                    generate_recommendation_table(response);
+                }
+            })
+        })
+
+        //recently played listener
+        document.getElementById('recently_played').addEventListener('click', function() {
+            $.ajax({
+                url: ngrok_url + '/recently_played',
+                type: 'get',
+                data: {
+                    access_token: access_token
+                },
+                success: function(response) {
+                    generate_recommendation_table(response);
+                }
+            })
+        })
+
+        //saved tracks listener
+        document.getElementById('saved_tracks').addEventListener('click', function() {
+            $.ajax({
+                url: ngrok_url + '/saved_tracks',
+                type: 'get',
+                data: {
+                    access_token: access_token
+                },
+                success: function(response) {
+                    generate_recommendation_table(response);
+                }
+            })
+        })
+
+        //helper function
+        function playlist_helper(item, index) {
+            document.getElementById(String(index)).addEventListener('click',
+                function() {
+                    $.ajax({
+                        url: ngrok_url + '/playlist',
+                        type: 'get',
+                        data: {
+                            access_token: access_token,
+                            req_id: item
+                        },
+                        success: function(response) {
+                            console.log(response)
+                        }
+                    })
+                })
+        }
+
+    })();
+    </script>
+
+</html>
