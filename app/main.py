@@ -53,7 +53,8 @@ def query_clusters(data):
     send_df.columns = col_names
     int_pred = predictions.astype(int)
     send_df['cluster'] = int_pred
-    img_url = make_visualizations(send_df, 2, 1000) 
+    #img_url = make_visualizations(send_df, 2, 1000)
+    img_url = 'https://www.cs.drexel.edu/~vck29/pennapps_static/img/favicon.png'
     return predictions, img_url
 
 def make_recommendations(access_token, id_list, predictions, num_recommendations):
