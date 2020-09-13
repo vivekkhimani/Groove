@@ -1,0 +1,5 @@
+1) Fix issues of dynamic event handlers with playlists!
+
+2) Fix the UI!
+
+3) Good to go! :)
