@@ -311,6 +311,7 @@
                     window.location.href = "#recommendations";
 
                     const plot_div = document.getElementById('generated_plots');
+                    plot_div.innerHTML = '';
                     const h5_tag1 = document.createElement('h5');
                     h5_tag1.innerHTML = "Recommended Cluster Distribution";
                     plot_div.appendChild(h5_tag1);
