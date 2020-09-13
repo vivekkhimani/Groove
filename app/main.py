@@ -136,7 +136,7 @@ def make_visualizations(X, reduce_comp, num_clusters):
     print(plot_name)
     full_svg_path = os.path.join(SERVER_ROOT, 'plots', plot_name)
     fig.write_image(full_svg_path)
-    img_url = 'https://e15010db582e.ngrok.io/plots/' + plot_name
+    img_url = 'https://1e8c12cf6ba1.ngrok.io/plots/' + plot_name
     #img_url = 'http://groove-music-289322.uc.r.appspot.com/plots/' + plot_name
     return img_url
 
