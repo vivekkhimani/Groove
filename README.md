@@ -1,5 +1,9 @@
 ## Groove: An Unsupervised, Data Sensitive Music Recommendation Algorithm
 
+### VIEW:
+- <a href="https://devpost.com/software/groove-wmhrj4?ref_content=user-portfolio&ref_feature=in_progress">Devpost</a>
+- <a href="https://youtu.be/0qaWV8xuaAo">Demo Video</a>
+
 ### IDEA
 An unsupervised approach to music recommendation without accessing other users data and use traditional recommendation algorithms like collaborative filtering.
 
