@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, Response, send_from_directory, url_for, render_template, make_response
 import requests, json
 import ast
-import time, random
+import time
 import sys, os, csv, json
 import numpy as np
 import pandas as pd
@@ -13,6 +13,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 import plotly.express as px
+import secrets
 
 #flask init
 app = Flask(__name__)
@@ -97,7 +98,7 @@ def make_recommendations(access_token, id_list, predictions, num_recommendations
         if reference == len(predictions):
             reference = 0
         selected_cluster = predictions[reference]
-        random_index = random.choice(saved_cluster_data[str(selected_cluster)])
+        random_index = secrets.choice(saved_cluster_data[str(selected_cluster)])
         track_id = saved_id_references[str(random_index)]
         track_name = saved_name_references[track_id]
         link = 'https://api.spotify.com/v1/tracks?ids='+track_id+"&market=US"
