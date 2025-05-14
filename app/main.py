@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, Response, send_from_directory, url_for, render_template, make_response
-import requests, json
+import json
 import ast
 import time, random
 import sys, os, csv, json
@@ -13,6 +13,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 import plotly.express as px
+from security import safe_requests
 
 #flask init
 app = Flask(__name__)
@@ -29,7 +30,7 @@ def parse_user_favorites(access_token, id_list):
         if indices < limit:
             ids_string+='%2C'
     full_link = 'https://api.spotify.com/v1/audio-features?ids='+ids_string
-    audio_features = requests.get(full_link, headers=headers)
+    audio_features = safe_requests.get(full_link, headers=headers)
     audio_json = audio_features.json()
     df = pd.DataFrame(audio_json['audio_features'])
     required_features = ['acousticness', 'danceability',  'loudness', 'tempo', 'energy', 'instrumentalness', 'valence','liveness', 'speechiness']
@@ -68,7 +69,7 @@ def make_recommendations(access_token, id_list, predictions, num_recommendations
         if indices < limit:
             ids_string+='%2C'
     full_link = 'https://api.spotify.com/v1/tracks?ids='+ids_string+"&market=US"
-    track_details = requests.get(full_link, headers=headers)
+    track_details = safe_requests.get(full_link, headers=headers)
     track_json = track_details.json()
     for items in track_json['tracks']:
         name_list.append(items['name'])
@@ -101,7 +102,7 @@ def make_recommendations(access_token, id_list, predictions, num_recommendations
         track_id = saved_id_references[str(random_index)]
         track_name = saved_name_references[track_id]
         link = 'https://api.spotify.com/v1/tracks?ids='+track_id+"&market=US"
-        track_det = requests.get(link, headers=headers)
+        track_det = safe_requests.get(link, headers=headers)
         track_js = track_det.json()
         track_url = track_js['tracks'][0]['external_urls']['spotify']
         if (track_id not in id_list) and (track_id not in final_predicted_ids):
@@ -168,7 +169,7 @@ def get_playlist():
     user_playlist = list()
     access_token = request.args.get("access_token")
     headers = {'Authorization': 'Bearer ' + access_token}
-    playlist_data = requests.get('https://api.spotify.com/v1/me/playlists', headers=headers)
+    playlist_data = safe_requests.get('https://api.spotify.com/v1/me/playlists', headers=headers)
     playlist_json = playlist_data.json()
     return_list = list()
     for items in playlist_json['items']:
@@ -179,7 +180,7 @@ def get_playlist():
 def top_songs():
     access_token = request.args.get("access_token")
     headers = {'Authorization': 'Bearer ' + access_token}
-    top_songs_data = requests.get(' https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=20&offset=5', headers=headers)
+    top_songs_data = safe_requests.get(' https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=20&offset=5', headers=headers)
     top_songs_json = top_songs_data.json()
     tracks_list = top_songs_json['items']
     id_list = list()
@@ -194,7 +195,7 @@ def playlist():
     playlist_id = request.args.get("req_id")
     headers = {'Authorization': 'Bearer ' + access_token}
     full_link = "https://api.spotify.com/v1/playlists/"+playlist_id+"/tracks?market=US&fields=items(added_by.id%2Ctrack(name%2Cid%2Chref%2Calbum(name%2Chref)))&limit=50&offset=5";
-    playlist_data = requests.get(full_link, headers=headers);
+    playlist_data = safe_requests.get(full_link, headers=headers);
     playlist_json = playlist_data.json()
     id_list = list()
     for items in playlist_json['items']:
@@ -210,7 +211,7 @@ def recently_played():
     deduct_time = 8.64e+7
     after_stamp = int(current_time - deduct_time)
     spotify_req_url = 'https://api.spotify.com/v1/me/player/recently-played?type=track&limit=10&after='+str(after_stamp)
-    recently_played_data = requests.get(spotify_req_url, headers=headers)
+    recently_played_data = safe_requests.get(spotify_req_url, headers=headers)
     recently_played_json = recently_played_data.json()
     tracks_list = recently_played_json['items']
     id_list = list()
@@ -223,7 +224,7 @@ def recently_played():
 def saved_tracks():
     access_token = request.args.get("access_token")
     headers = {'Authorization': 'Bearer ' + access_token}
-    saved_tracks_data = requests.get('https://api.spotify.com/v1/me/tracks?market=US&limit=20&offset=5', headers=headers)
+    saved_tracks_data = safe_requests.get('https://api.spotify.com/v1/me/tracks?market=US&limit=20&offset=5', headers=headers)
     saved_tracks_json = saved_tracks_data.json()
     tracks_list = saved_tracks_json['items']
     id_list = list()
